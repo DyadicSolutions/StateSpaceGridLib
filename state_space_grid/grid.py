@@ -69,7 +69,7 @@ class GridMeasures:
 @dataclass
 class Grid:
     trajectory_list: List[Trajectory]
-    quantization: GridQuantization = field(default=GridQuantization)
+    quantization: GridQuantization = field(default_factory=GridQuantization)
 
     def __shared_all_trajectory_process(self):
         # todo :: sensible name :)
@@ -163,11 +163,14 @@ class Grid:
     def draw(
         self,
         save_as: Optional[str] = None,
-        style: GridStyle = field(default_factory=GridStyle),
+        style: Optional[GridStyle] = None
     ):
         """
         if save_as is None, will .show() the plot
         """
+        if style is None:
+            style = GridStyle()
+
         graph = nx.Graph()
         ax = plt.gca()
 
