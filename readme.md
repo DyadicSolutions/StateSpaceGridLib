@@ -28,7 +28,7 @@ Your data file should include, at a minimum, the timestamp variable and the time
 
 In this example, we import a csv file that contains data on parent affect (first state variable) and child affect (second state variable) coded on a scale of 1-5 (1 being high negative, 5 being high positive), in 30-second bins over 5 minutes (timestamp variable with 11 values covering the range 0-5 minutes). 
 ```csv
-Onset,Parent Affect,ChildAffect
+Onset,Parent Affect,Child Affect
 0.0,1,2
 0.5,1,2
 1.0,3,3
@@ -49,14 +49,13 @@ import state_space_grid as ssg
 import pandas as pd 
 
 if __name__=="__main__":    
-    raw_data = pd.read_csv('examples/resources/ExampleData1.txt')
-    formatted_data = {}
-    formatted_data["ID"]=0
-    formatted_data["Parent Affect"]=raw_data["Parent Affect"].dropna().tolist()
-    formatted_data["Child Affect"]=raw_data["Child Affect"].dropna().tolist()
-    formatted_data["Time_Onset"]=raw_data["Onset"].dropna().tolist()
-
-    trajectory = ssg.Trajectory(formatted_data["Parent Affect"],formatted_data["Child Affect"],formatted_data["Time_Onset"], id=formatted_data["ID"])
+    # read in the contents of a csv data file called example1.csv
+    raw_data = pd.read_csv('example1.csv')
+    # pass the columns of the csv file to the Trajectory object constructor
+    # make sure to get rid of any NaN (Not a Number) values with dropna() and convert to a list with tolist()
+    trajectory = ssg.Trajectory(raw_data["Parent Affect"].dropna().tolist(),raw_data["Child Affect"].dropna().tolist(),raw_data["Onset"].dropna().tolist(), id=0)
+    # pass the trajectory to the Grid object constructor
+    # the constructor takes a list of trajectories, so here we put the trajectory inside a square brackets, making it a list of length 1
     grid=ssg.Grid([trajectory])
 
     #to print measures for this grid 
