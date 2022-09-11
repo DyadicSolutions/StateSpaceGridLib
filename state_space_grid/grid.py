@@ -28,8 +28,8 @@ class GridStyle:
     rotate_x_labels: bool = False
     checker_light: Sequence[float] = (220 / 256, ) * 3
     checker_dark: Sequence[float] = (1, ) * 3
-    connection_style: str = "arc3,rad=0.0",
-    arrow_style: str = "-|>",
+    connection_style: str = "arc3,rad=0.0"
+    arrow_style: str = "-|>"
 
 
 # todo :: is this ideal class name? maybe.
