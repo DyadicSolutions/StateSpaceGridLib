@@ -28,40 +28,45 @@ Your data file should include, at a minimum, the timestamp variable and the time
 
 In this example, we import a csv file that contains data on parent affect (first state variable) and child affect (second state variable) coded on a scale of 1-5 (1 being high negative, 5 being high positive), in 30-second bins over 5 minutes (timestamp variable with 11 values covering the range 0-5 minutes). 
 ```csv
-
+Onset,Parent Affect,ChildAffect
+0.0,1,2
+0.5,1,2
+1.0,3,3
+1.5,2,4
+2.0,1,4
+2.5,2,3
+3.0,4,5
+3.5,5,5
+4.0,5,3
+4.5,3,1
+5.0
 ```
 ```python
+# Template 1
+# script for obtaining measures of state space grid 
 
-#script for obtaining measures of state space grid 
-
-import statespacegrid as ssg 
+import state_space_grid as ssg 
 import pandas as pd 
 
-if __name__=="__main__":
-        
-   raw_data = pd.read_csv('example1.csv')
-   formatted_data = {}
-   formatted_data["ID"]=0
-   formatted_data["Parent Affect"]=[]
-   formatted_data["Child Affect"]=[]
-   formatted_data["Time_Onset"]=[]
-   
-   for index, row in data.iterrows():
-      formatted_data["Parent Affect"].append(row["Parent Affect"])
-      formatted_data["Child Affect"].append(row["Child Affect"])
-      formatted_data["Time_Onset"].append(row["Time_Onset"])
+if __name__=="__main__":    
+    raw_data = pd.read_csv('examples/resources/ExampleData1.txt')
+    formatted_data = {}
+    formatted_data["ID"]=0
+    formatted_data["Parent Affect"]=raw_data["Parent Affect"].dropna().tolist()
+    formatted_data["Child Affect"]=raw_data["Child Affect"].dropna().tolist()
+    formatted_data["Time_Onset"]=raw_data["Onset"].dropna().tolist()
 
-   trajectory = ssg.Trajectory(formatted_data["Parent Affect"],formatted_data["Child Affect"],formatted_data["Time_Onset"])
-   grid=ssg.Grid([trajectory])
+    trajectory = ssg.Trajectory(formatted_data["Parent Affect"],formatted_data["Child Affect"],formatted_data["Time_Onset"], id=formatted_data["ID"])
+    grid=ssg.Grid([trajectory])
 
-   #to print measures for this grid 
+    #to print measures for this grid 
 
-   measure=grid.get_measures()
-   print(measure)
-   
-   #to get the image visualization of the grid - this will show up on your screen in a separate window 
+    measure=grid.get_measures()
+    print(measure)
 
-   grid.draw()
+    #to get the image visualization of the grid - this will show up on your screen in a separate window 
+
+    grid.draw()
    
       
 ```
