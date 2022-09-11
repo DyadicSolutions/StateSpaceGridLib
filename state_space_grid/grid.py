@@ -258,11 +258,11 @@ class Grid:
                 nodelist=list(range(len(x_data))),
                 edgelist=edges,
                 arrows=True,
-                arrowstyle=arrow_style,
+                arrowstyle=style.arrow_style,
                 node_shape=".",
                 arrowsize=10,
                 width=2,
-                connectionstyle=connection_style,
+                connectionstyle=style.connection_style,
             )
 
         # all of this needs to go in a separate function, called with show()
