@@ -43,7 +43,7 @@ Onset,Parent Affect,Child Affect
 ```
 ```python
 # Template 1
-# script for obtaining measures of state space grid 
+# script for obtaining measures of state space grid and displaying the grid itself
 
 import state_space_grid as ssg 
 import pandas as pd 
@@ -58,12 +58,12 @@ if __name__=="__main__":
     # the constructor takes a list of trajectories, so here we put the trajectory inside a square brackets, making it a list of length 1
     grid=ssg.Grid([trajectory])
 
-    #to print measures for this grid 
+    # to print measures for this grid 
 
     measure=grid.get_measures()
     print(measure)
 
-    #to get the image visualization of the grid - this will show up on your screen in a separate window 
+    # to get the image visualization of the grid - this will show up on your screen in a separate window 
 
     grid.draw()
    
