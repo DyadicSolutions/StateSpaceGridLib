@@ -55,7 +55,7 @@ if __name__=="__main__":
     # make sure to get rid of any NaN (Not a Number) values with dropna() and convert to a list with tolist()
     trajectory = ssg.Trajectory(raw_data["Parent Affect"].dropna().tolist(),raw_data["Child Affect"].dropna().tolist(),raw_data["Onset"].dropna().tolist(), id=0)
     # pass the trajectory to the Grid object constructor
-    # the constructor takes a list of trajectories, so here we put the trajectory inside a square brackets, making it a list of length 1
+    # the constructor takes a list of trajectories, so here we put the trajectory inside square brackets, making it a list of length 1
     grid=ssg.Grid([trajectory])
 
     # to print measures for this grid 
@@ -71,46 +71,209 @@ if __name__=="__main__":
 ```
 
 ### Template 2 for importing csv file to be used (contains more than one trajectory, e.g. multiple dyads from a study/multiple participant IDs) 
-
+This second template is an extension of the first template. In this case we have a data file which contains data for two different trajectories. 
+The sample csv below shows a suggestion of how the data could be laid out for ease of handling in the python script.
+The ID column with its repeated ID values is a very useful feature when read in by the script, as it lets the code know exactly which ID each row belongs to.
+With this property, we are able to use some of the built-in cleverness in the python library pandas to easily split the data in two.
+As an extension, below the template script is a version of that script which, given the same data layout in a csv file, can read in any amount of trajectory data with no extra knowledge needed about how many trajectories there are in the data file. 
+This is to provide an example of the approach which should be used when using SSG on large volumes of collated data.
 ```csv
-
+ID,Onset,Parent Affect,Child Affect
+123,0.0,1,2
+123,0.5,1,2
+123,1.0,3,3
+123,1.5,2,4
+123,2.0,1,4
+123,2.5,2,3
+123,3.0,4,5
+123,3.5,5,5
+123,4.0,5,3
+123,4.5,3,1
+123,5.0,,
+456,0.0,2,2
+456,0.5,1,3
+456,1.0,3,3
+456,1.5,4,4
+456,2.0,4,4
+456,2.5,2,4
+456,3.0,1,5
+456,3.5,3,5
+456,4.0,2,3
+456,4.5,3,4
+456,5.0,,
 ```
 ```python
+# Template 2
+# script for obtaining measures of state space grid and displaying the grid itself for two different trajectories read from the same file
 
-import statespacegrid as ssg 
+import state_space_grid as ssg 
 import pandas as pd 
 
-if __name__=="__main__":
-        
-   raw_data = pd.read_csv('example1.csv')
-   formatted_data = {}
-   formatted_data["ID"]=0
-   formatted_data["Parent Affect"]=[]
-   formatted_data["Child Affect"]=[]
-   formatted_data["Time_Onset"]=[]
-   
-   for index, row in data.iterrows():
-   
-      formatted_data["Parent Affect"].append(row["Parent Affect"])
-      formatted_data["Child Affect"].append(row["Child Affect"])
-      formatted_data["Time_Onset"].append(row["Time_Onset"])
+if __name__=="__main__":    
+    # read in the contents of a csv data file called example1.csv
+    raw_data = pd.read_csv('example1.csv')
+    # split the data into two different sets, dependent on the value of ID in each row
+    data_traj_1 = raw_data.loc[raw_data["ID"]==123]
+    data_traj_2 = raw_data.loc[raw_data["ID"]==456]
 
-   trajectory = ssg.Trajectory(formatted_data["Parent Affect"],formatted_data["Child Affect"],formatted_data["Time_Onset"])
+    # pass the columns of the csv file to the Trajectory object constructor
+    # make sure to get rid of any NaN (Not a Number) values with dropna() and convert to a list with tolist()
+    trajectory1 = ssg.Trajectory(data_traj_1["Parent Affect"].dropna().tolist(),data_traj_1["Child Affect"].dropna().tolist(),data_traj_1["Onset"].dropna().tolist(), id=data_traj_1["ID"][0])
+    trajectory2 = ssg.Trajectory(data_traj_2["Parent Affect"].dropna().tolist(),data_traj_2["Child Affect"].dropna().tolist(),data_traj_2["Onset"].dropna().tolist(), id=data_traj_2["ID"][0])
+    # pass the trajectories to the Grid object constructor
+    # the constructor takes a list of trajectories, so here we put both trajectories inside square brackets, making a list of length 2
+    grid=ssg.Grid([trajectory1,trajectory2])
+
+    # to print measures for this grid 
+
+    measure=grid.get_measures()
+    print(measure)
+
+    # to get the image visualization of the grid - this will show up on your screen in a separate window 
+
+    grid.draw()
+   
+      
+```
+Displayed below is an alternative solution to the one shown above. It gets the ID values directly from the csv data, and makes no assumptions about the number of IDs (and hence number of trajectories) in the dataset.
+Instead trajectory objects (and the trajectory data that those objects are made with) are stored in lists, with new IDs added to the end of the list.
+This solution will work for csv data with an ID column as above, containing results for any number of IDs.
+```python
+# Template 2.5
+# Script for obtaining measures of state space grid and displaying the grid itself for an arbitrary number of different trajectories read from the same file
+# This script will work for any number of trajectories held in the same file, not just 2.
+
+import state_space_grid as ssg 
+import pandas as pd 
+
+if __name__=="__main__":    
+    # read in the contents of a csv data file called example1.csv
+    raw_data = pd.read_csv('example1.csv')
+    # Identify all unique IDs in the data file
+    id_values = raw_data["ID"].unique()
+    # create a list to hold each DataFrame (pandas term for a table) split up by ID value
+    split_data = []
+    # add DataFrames to the list - one per ID value
+    for id in id_values:
+        split_data.append(raw_data.loc[raw_data["ID"]==id])
+
+    # make a list to hold trajectories
+    trajectories = []
+    # add Trajectory objects to the list
+    # pass the columns of the csv file to the Trajectory object constructor
+    # make sure to get rid of any NaN (Not a Number) values with dropna() and convert to a list with tolist()
+    for data in split_data:
+        trajectories.append(ssg.Trajectory(data["Parent Affect"].dropna().tolist(),data["Child Affect"].dropna().tolist(),data["Onset"].dropna().tolist(), id=data["ID"][0]))
+
+    # pass the trajectory list to the Grid object constructor
+    grid=ssg.Grid(trajectories)
+
+    # to print measures for this grid 
+
+    measure=grid.get_measures()
+    print(measure)
+
+    # to get the image visualization of the grid - this will show up on your screen in a separate window 
+
+    grid.draw()
+   
       
 ```
 
 ### Template 3 for making use of trj files from Gridware with SSG 
 
 For more information on trj files, refer to the [Gridware manual](https://www.queensu.ca/psychology/sites/psycwww/files/uploaded_files/Faculty/Tom%20Hollenstein/GridWare/GridWare1.1_Manual.pdf)
-
+SSG contains a tool for taking trj files, and turning them directly into trajectory objects in the python code.
 ```tsv
+Onset	variable 1	variable 2	variable 3
+0.00	1	3	2
+0.65	2	2	3
+1.51	3	1	4
+3.21	4	2	3
+8.36	3	3	2
+9.45	2	4	1
+10.39	1	3	2
+11.53	2	2	3
+13.32	3	1	4
+14.00
+```
+```python
+# Template 3
+# script for obtaining measures of state space grid and displaying the grid itself
+
+import state_space_grid as ssg 
+import pandas as pd 
+
+if __name__=="__main__":    
+    
+    # read in trajectory data using from_legacy_trj.
+    # the function takes a file name, and a tuple containing the column numbers of your two variables. 
+    # there is an implicit assumption that "Onset" is column 0. 
+    # by default, if you were to not provide anything to the function aside from the filename, it would take the variables in columns 1 and 2 for the x and y data.
+    trajectory = ssg.Trajectory.from_legacy_trj("example1.trj",(2,3))
+    # pass the trajectory to the Grid object constructor
+    # the constructor takes a list of trajectories, so here we put the trajectory inside square brackets, making it a list of length 1
+    grid=ssg.Grid([trajectory])
+
+    # to print measures for this grid 
+
+    measure=grid.get_measures()
+    print(measure)
+
+    # to get the image visualization of the grid - this will show up on your screen in a separate window 
+
+    grid.draw()
+   
+      
 ```
 
-### Template 3 for importing multiple trajectories (e.g. participants in a study with each dyad in a separate file) 
+### Template 4 for importing multiple trajectories (e.g. participants in a study with each dyad in a separate file) 
+Earlier in the examples (templates 2, 2.5) there is an example case where all the data for multiple trajectories is contained within one csv file.
+There may be a case where instead, the data is in lots of files with one file per trajectory.
+Here we show an approach for dealing with this case, in a similar style to template 2.5.
+```python
+# Template 4
+# Script for obtaining measures of state space grid and displaying the grid itself for an arbitrary number of different trajectories read from different files
+# This script will work for any number of files held in the same folder/directory.
+
+import state_space_grid as ssg 
+import pandas as pd 
+import glob
+
+if __name__=="__main__":    
+    # get a list of all csv datafiles in the folder
+    # here we are assuming that the script is being run in the same folder as the csv files.
+    datafiles = glob.glob("*.csv")
+    # make a list to store the data from the files
+    data_list = []
+    # read in each datafile found by glob.glob and add to the data list
+    for file in datafiles:
+        data_list.append(pd.read_csv(file))
+    # make a list to hold trajectories
+    trajectories = []
+    # add Trajectory objects to the list
+    # pass the columns of the csv file to the Trajectory object constructor
+    # make sure to get rid of any NaN (Not a Number) values with dropna() and convert to a list with tolist()
+    for data in data_list:
+        trajectories.append(ssg.Trajectory(data["Parent Affect"].dropna().tolist(),data["Child Affect"].dropna().tolist(),data["Onset"].dropna().tolist(), id=data["ID"][0]))
+
+    # pass the trajectory list to the Grid object constructor
+    grid=ssg.Grid(trajectories)
+
+    # to print measures for this grid 
+
+    measure=grid.get_measures()
+    print(measure)
+
+    # to get the image visualization of the grid - this will show up on your screen in a separate window 
+
+    grid.draw()
+   
+      
+```
 
 ## Todos
 
-- Add examples to readme
 - General code cleanliness
 - More unit tests :)
 
