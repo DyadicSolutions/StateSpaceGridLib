@@ -21,7 +21,9 @@ Once it has been installed, you can start to make use of the library within a Py
 
 ## Examples
 
-For Template 1 and 2, the csv data files provided display the recommended data file structure that can be used with the corresponding Python script without any changes required. It is perfectly fine for your data file structure to be completely different, though that would require some changes to the Python scripts. 
+Templates 1 to 4 are all demonstrations for different approaches to handling data and getting it into a form that the SSG library can use.
+Templates 5 onwards are focused on showcasing the different features of SSG.
+For Templates 1 and 2, the csv data files provided display the recommended data file structure that can be used with the corresponding Python script without any changes required. It is perfectly fine for your data file structure to be completely different, though that would require some changes to the Python scripts. 
 
 ### Template 1 for importing csv file to be used (only contains one trajectory, e.g. only one dyad from a study)
 Your data file should include, at a minimum, the timestamp variable and the time series data (two state variables). 
@@ -67,7 +69,6 @@ if __name__=="__main__":
 
     grid.draw()
    
-      
 ```
 
 ### Template 2 for importing csv file to be used (contains more than one trajectory, e.g. multiple dyads from a study/multiple participant IDs) 
@@ -77,6 +78,7 @@ The ID column with its repeated ID values is a very useful feature when read in 
 With this property, we are able to use some of the built-in cleverness in the python library pandas to easily split the data in two.
 As an extension, below the template script is a version of that script which, given the same data layout in a csv file, can read in any amount of trajectory data with no extra knowledge needed about how many trajectories there are in the data file. 
 This is to provide an example of the approach which should be used when using SSG on large volumes of collated data.
+Both scripts, after calculating the cumulative measures of all trajectories on the same grid, then calculate measures for each trajectory individually and deposit these into a new csv file.
 ```csv
 ID,Onset,Parent Affect,Child Affect
 123,0.0,1,2
@@ -118,8 +120,8 @@ if __name__=="__main__":
 
     # pass the columns of the csv file to the Trajectory object constructor
     # make sure to get rid of any NaN (Not a Number) values with dropna() and convert to a list with tolist()
-    trajectory1 = ssg.Trajectory(data_traj_1["Parent Affect"].dropna().tolist(),data_traj_1["Child Affect"].dropna().tolist(),data_traj_1["Onset"].dropna().tolist(), id=data_traj_1["ID"][0])
-    trajectory2 = ssg.Trajectory(data_traj_2["Parent Affect"].dropna().tolist(),data_traj_2["Child Affect"].dropna().tolist(),data_traj_2["Onset"].dropna().tolist(), id=data_traj_2["ID"][0])
+    trajectory1 = ssg.Trajectory(data_traj_1["Parent Affect"].dropna().tolist(),data_traj_1["Child Affect"].dropna().tolist(),data_traj_1["Onset"].dropna().tolist(), id=data_traj_1["ID"].tolist()[0])
+    trajectory2 = ssg.Trajectory(data_traj_2["Parent Affect"].dropna().tolist(),data_traj_2["Child Affect"].dropna().tolist(),data_traj_2["Onset"].dropna().tolist(), id=data_traj_2["ID"].tolist()[0])
     # pass the trajectories to the Grid object constructor
     # the constructor takes a list of trajectories, so here we put both trajectories inside square brackets, making a list of length 2
     grid=ssg.Grid([trajectory1,trajectory2])
@@ -132,6 +134,20 @@ if __name__=="__main__":
     # to get the image visualization of the grid - this will show up on your screen in a separate window 
 
     grid.draw()
+    
+    # alternatively if we want to calculate measures individually for each trajectory and then deposit these in a data file:
+    # calculate measures
+    measures_1 = ssg.Grid([trajectory1]).get_measures()
+    measures_2 = ssg.Grid([trajectory2]).get_measures()
+    # get the column names from the measure object using the python function vars, which turns objects into dictionaries
+    column_names = vars(measures_1).keys()
+    # get your rows for the csv file using the same trick
+    rows = [vars(measures_1).values(), vars(measures_2).values()]
+    # put the rows and column headers into a pandas DataFrame
+    df = pd.DataFrame(rows, columns=column_names)
+    # use the DataFrame function to_csv to output the data to a csv file. 
+    # index=False tells it to not include a row index in the leftmost column
+    df.to_csv("test_output.csv", index=False)
    
       
 ```
@@ -163,7 +179,7 @@ if __name__=="__main__":
     # pass the columns of the csv file to the Trajectory object constructor
     # make sure to get rid of any NaN (Not a Number) values with dropna() and convert to a list with tolist()
     for data in split_data:
-        trajectories.append(ssg.Trajectory(data["Parent Affect"].dropna().tolist(),data["Child Affect"].dropna().tolist(),data["Onset"].dropna().tolist(), id=data["ID"][0]))
+        trajectories.append(ssg.Trajectory(data["Parent Affect"].dropna().tolist(),data["Child Affect"].dropna().tolist(),data["Onset"].dropna().tolist(), id=data["ID"].tolist()[0]))
 
     # pass the trajectory list to the Grid object constructor
     grid=ssg.Grid(trajectories)
@@ -176,8 +192,23 @@ if __name__=="__main__":
     # to get the image visualization of the grid - this will show up on your screen in a separate window 
 
     grid.draw()
-   
-      
+    
+    # alternatively if we want to calculate measures individually for each trajectory and then deposit these in a data file:
+    # calculate measures
+    individual_measures = []
+    for trajectory in trajectories:
+        individual_measures.append(ssg.Grid([trajectory]).get_measures())
+    # get the column names from the measure object using the python function vars, which turns objects into dictionaries
+    column_names = vars(individual_measures[0]).keys()
+    # get your rows for the csv file using the same trick
+    rows = []
+    for measure in individual_measures:
+        rows.append(vars(measure).values())
+    # put the rows and column headers into a pandas DataFrame
+    df = pd.DataFrame(rows, columns=column_names)
+    # use the DataFrame function to_csv to output the data to a csv file. 
+    # index=False tells it to not include a row index in the leftmost column
+    df.to_csv("test_output.csv", index=False)
 ```
 
 ### Template 3 for making use of trj files from Gridware with SSG 
@@ -255,7 +286,7 @@ if __name__=="__main__":
     # pass the columns of the csv file to the Trajectory object constructor
     # make sure to get rid of any NaN (Not a Number) values with dropna() and convert to a list with tolist()
     for data in data_list:
-        trajectories.append(ssg.Trajectory(data["Parent Affect"].dropna().tolist(),data["Child Affect"].dropna().tolist(),data["Onset"].dropna().tolist(), id=data["ID"][0]))
+        trajectories.append(ssg.Trajectory(data["Parent Affect"].dropna().tolist(),data["Child Affect"].dropna().tolist(),data["Onset"].dropna().tolist(), id=data["ID"].tolist()[0]))
 
     # pass the trajectory list to the Grid object constructor
     grid=ssg.Grid(trajectories)
@@ -272,6 +303,111 @@ if __name__=="__main__":
       
 ```
 
+### Template 5 for handling non-numeric data in SSG
+This template showcases SSG's approach for displaying data which is on a non-numeric scale (categoric data, by GridWare's definitions).
+It is almost as simple to handle this form of data as for numeric data. 
+The one difference is that SSG needs to know what order these data points come in. For example ["small","medium","large"] or ["Poor","Acceptable","Exceeds Expectations","Outstanding"].
+```csv
+Onset,Parent Affect,Child Affect
+0.0,HOSTILE,NEGATIVE
+0.5,HOSTILE,NEGATIVE
+1.0,NEUTRAL,NEUTRAL
+1.5,NEGATIVE,POSITIVE
+2.0,HOSTILE,POSITIVE
+2.5,NEGATIVE,NEUTRAL
+3.0,POSITIVE,POSITIVE
+3.5,POSITIVE,POSITIVE
+4.0,POSITIVE,NEUTRAL
+4.5,NEUTRAL,HOSTILE
+5.0
+```
+```python
+# Template 5
+# script for obtaining measures of state space grid and displaying the grid itself
+# data is categoric/non-numeric
+
+import state_space_grid as ssg 
+import pandas as pd 
+
+if __name__=="__main__":    
+    # read in the contents of a csv data file called example1.csv
+    raw_data = pd.read_csv('example1.csv')
+    # pass the columns of the csv file to the Trajectory object constructor
+    # make sure to get rid of any NaN (Not a Number) values with dropna() and convert to a list with tolist()
+    trajectory = ssg.Trajectory(raw_data["Parent Affect"].dropna().tolist(),raw_data["Child Affect"].dropna().tolist(),raw_data["Onset"].dropna().tolist(), id=0)
+
+    # first define the ordering for our variables:
+    ordering = ["HOSTILE","NEGATIVE","NEUTRAL","POSITIVE"]
+    # All extra data to do with defining extra things needed for calculations goes in a GridQuantization object
+    # in this case we need to tell it what the ordering for x and y objects is.
+    quantization = ssg.GridQuantization(x_order=ordering, y_order=ordering)
+    # pass the trajectory to the Grid object constructor
+    # the constructor takes a list of trajectories, so here we put the trajectory inside square brackets, making it a list of length 1
+    grid=ssg.Grid([trajectory])
+
+    # to print measures for this grid 
+
+    measure=grid.get_measures()
+    print(measure)
+
+    # to get the image visualization of the grid - this will show up on your screen in a separate window 
+
+    grid.draw()
+   
+```
+### Template 6 for demonstrating GridQuantization objects in SSG
+As introduced in template 5, SSG defines an object called a GridQuantization. 
+This is effectively used to store options and information about the data being inputted.
+If options in GridQuantization objects are not given, SSG will try to work out what fits best from the data provided.
+As seen in templates 1-4, one can go completely without a GridQuantization object, and SSG will make it's best guess at _everything_.
+
+```csv
+Onset,Parent Affect,Child Affect
+0.0,10,20
+0.5,10,20
+1.0,30,30
+1.5,20,40
+2.0,10,40
+2.5,20,30
+3.0,40,50
+3.5,50,50
+4.0,50,30
+4.5,30,10
+5.0
+```
+```python
+# Template 6
+# script for obtaining measures of state space grid and displaying the grid itself
+# here we make use of all the options that GridQuantization has to provide 
+# (apart from x_order and y_order, which already got their introduction in template 5)
+
+import state_space_grid as ssg 
+import pandas as pd 
+
+if __name__=="__main__":    
+    # read in the contents of a csv data file called example1.csv
+    raw_data = pd.read_csv('example1.csv')
+    # pass the columns of the csv file to the Trajectory object constructor
+    # make sure to get rid of any NaN (Not a Number) values with dropna() and convert to a list with tolist()
+    trajectory = ssg.Trajectory(raw_data["Parent Affect"].dropna().tolist(),raw_data["Child Affect"].dropna().tolist(),raw_data["Onset"].dropna().tolist(), id=0)
+    # all extra data to do with defining extra things needed for calculations goes in a GridQuantization object
+    # there are separate fields for each of the x and y axis to allow for the chance of differing scales of measurement.
+    quantization = ssg.GridQuantization(cell_size_x=10, cell_size_y=10, x_min=10, x_max=100, y_min=10, y_max=100)
+    # pass the trajectory to the Grid object constructor
+    # the constructor takes a list of trajectories, so here we put the trajectory inside square brackets, making it a list of length 1
+    grid=ssg.Grid([trajectory])
+
+    # to print measures for this grid 
+
+    measure=grid.get_measures()
+    print(measure)
+
+    # to get the image visualization of the grid - this will show up on your screen in a separate window 
+
+    grid.draw()
+   
+      
+```
 ## Todos
 
 - General code cleanliness
