@@ -73,8 +73,8 @@ class Grid:
 
     def __shared_all_trajectory_process(self):
         # todo :: sensible name :)
-        x_min = self.trajectory_list[0].data_x[0] if self.quantization is None else self.quantization.x_order.index(self.trajectory_list[0].data_x[0])
-        y_min = self.trajectory_list[0].data_y[0] if self.quantization is None else self.quantization.y_order.index(self.trajectory_list[0].data_y[0])
+        x_min = self.trajectory_list[0].data_x[0] if self.quantization.x_order is None else self.quantization.x_order.index(self.trajectory_list[0].data_x[0])
+        y_min = self.trajectory_list[0].data_y[0] if self.quantization.y_order is None else self.quantization.y_order.index(self.trajectory_list[0].data_y[0])
         x_max = x_min
         y_max = y_min
 
@@ -294,12 +294,12 @@ class Grid:
         ax.xaxis.set_major_locator(ticker.FixedLocator(rounded_x_points))
         ax.yaxis.set_major_locator(ticker.FixedLocator(rounded_y_points))
         ax.xaxis.set_major_formatter(ticker.FixedFormatter(
-            self.quantization.x_order[x_min:x_max+1]
-            or [str(i) for i in rounded_x_points]
+            [str(i) for i in rounded_x_points] if self.quantization.x_order is None else
+            self.quantization.x_order[x_min:x_max + 1]
         ))
         ax.yaxis.set_major_formatter(ticker.FixedFormatter(
-            self.quantization.y_order[y_min:y_max+1]
-            or [str(i) for i in rounded_y_points]
+            [str(i) for i in rounded_y_points] if self.quantization.y_order is None else
+            self.quantization.y_order[y_min:y_max + 1]
         ))
 
         # Set axis labels
