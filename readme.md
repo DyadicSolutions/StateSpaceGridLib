@@ -427,7 +427,7 @@ See [test_end_to_end.py](unit_tests/test_end_to_end.py), or the [examples](#exam
 ### Trajectory
 
 ```python
-Trajectory(data_x, data_y, data_t, id=None)
+Trajectory(data_x, data_y, data_t, style=TrajectoryStyle(), id=None)
 ```
 Data in StateSpaceGridLib is organised via Trajectories. These objects take in data for the x axis of the grid, data for the y axis of the grid, and time data for the transitions between states (ie. the time data specifies the time at which each state starts, as well as the end time of the last state).
 * `data_x`
@@ -440,6 +440,8 @@ Data in StateSpaceGridLib is organised via Trajectories. These objects take in d
 * `data_t`
 
    Time data: a list of length 1 longer than the x or y data, specifying the start time of each event in the data_x/data_y lists as well as the end point of the final event.
+* `style`
+   [TrajectoryStyle](#trajectorystyle) object containing options for the display of the trajectory on a grid in MatPLotLib.
 
 * `id`
 
