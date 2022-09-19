@@ -8,6 +8,11 @@ from typing import ClassVar, Optional, Tuple
 import networkx as nx
 import numpy as np
 
+@dataclass
+class TrajectoryStyle:
+    colour: str = None
+    alpha: float = None
+
 
 @dataclass
 class Trajectory:
@@ -17,6 +22,7 @@ class Trajectory:
     # todo :: data_t (onsets) should be replaced by durations
 
     id: int = None  # set in __post_init__
+    style: TrajectoryStyle = field(default_factory=TrajectoryStyle)
     # static count of number of trajectories - use as a stand in for ID
     # todo :: unsure if this is daft. probably daft?
     next_id: ClassVar[int] = 1

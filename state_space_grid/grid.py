@@ -231,7 +231,8 @@ class Grid:
 
             # generate a random colour
             # could alternatively use built in library colour and 3 rgb vals which then convert to hex
-            node_colours = "#" + "".join(choices(list(ascii_lowercase[:6])+[str(i) for i in range(10)], k=6))
+            node_colours = offset_trajectory.style.colour or "#" + "".join(choices(list(ascii_lowercase[:6])+[str(i) for i in range(10)], k=6))
+            node_alpha = offset_trajectory.style.alpha or 0.8
 
             # List of tuples to define edges between nodes
             # todo :: I wonder if python has a built in multigraph datatype for this
@@ -254,6 +255,7 @@ class Grid:
                 node_number_positions,
                 node_size=node_sizes,
                 node_color=node_colours,
+                alpha=node_alpha,
             )
             nx.draw_networkx_edges(
                 graph,
@@ -430,6 +432,7 @@ def offset_trajectories(
                     current_bin_counter,
                 ),
                 t_data,
+                style=trajectory.style,
             )
         )
     return new_trajectories
