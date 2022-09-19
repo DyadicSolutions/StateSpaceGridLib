@@ -30,8 +30,6 @@ class GridStyle:
     rotate_x_labels: bool = False
     checker_light: Sequence[float] = (220 / 256, ) * 3
     checker_dark: Sequence[float] = (1, ) * 3
-    connection_style: str = "arc3,rad=0.0"
-    arrow_style: str = "-|>"
 
 
 # todo :: is this ideal class name? maybe.
@@ -232,7 +230,6 @@ class Grid:
             # generate a random colour
             # could alternatively use built in library colour and 3 rgb vals which then convert to hex
             node_colours = offset_trajectory.style.colour or "#" + "".join(choices(list(ascii_lowercase[:6])+[str(i) for i in range(10)], k=6))
-            node_alpha = offset_trajectory.style.alpha or 0.8
 
             # List of tuples to define edges between nodes
             # todo :: I wonder if python has a built in multigraph datatype for this
@@ -255,7 +252,7 @@ class Grid:
                 node_number_positions,
                 node_size=node_sizes,
                 node_color=node_colours,
-                alpha=node_alpha,
+                alpha=offset_trajectory.style.alpha,
             )
             nx.draw_networkx_edges(
                 graph,
@@ -264,11 +261,11 @@ class Grid:
                 nodelist=list(range(len(x_data))),
                 edgelist=edges,
                 arrows=True,
-                arrowstyle=style.arrow_style,
+                arrowstyle=offset_trajectory.style.arrow_style,
                 node_shape=".",
                 arrowsize=10,
                 width=2,
-                connectionstyle=style.connection_style,
+                connectionstyle=offset_trajectory.style.connection_style,
             )
 
         # all of this needs to go in a separate function, called with show()

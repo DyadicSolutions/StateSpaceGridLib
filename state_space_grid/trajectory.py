@@ -11,7 +11,9 @@ import numpy as np
 @dataclass
 class TrajectoryStyle:
     colour: str = None
-    alpha: float = None
+    alpha: float = 1.0
+    connection_style: str = "arc3,rad=0.0"
+    arrow_style: str = "-|>"
 
 
 @dataclass
