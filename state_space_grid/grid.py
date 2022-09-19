@@ -4,6 +4,8 @@ from dataclasses import dataclass, field
 from typing import Optional, Union, List, Any, Sequence
 from numbers import Number
 from statistics import mean
+from random import choices
+from string import ascii_lowercase
 
 import networkx as nx
 import matplotlib.pyplot as plt
@@ -227,6 +229,10 @@ class Grid:
             x_data, y_data, t_data, _ = offset_trajectory.get_states()
             node_number_positions = dict(enumerate(zip(x_data, y_data)))
 
+            # generate a random colour
+            # could alternatively use built in library colour and 3 rgb vals which then convert to hex
+            node_colours = "#" + "".join(choices(list(ascii_lowercase[:6])+[str(i) for i in range(10)], k=6))
+
             # List of tuples to define edges between nodes
             # todo :: I wonder if python has a built in multigraph datatype for this
             edges = (
@@ -247,7 +253,7 @@ class Grid:
                 graph,
                 node_number_positions,
                 node_size=node_sizes,
-                node_color="indigo",
+                node_color=node_colours,
             )
             nx.draw_networkx_edges(
                 graph,
