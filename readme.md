@@ -78,7 +78,7 @@ The ID column with its repeated ID values is a very useful feature when read in 
 With this property, we are able to use some of the built-in cleverness in the python library pandas to easily split the data in two.
 As an extension, below the template script is a version of that script which, given the same data layout in a csv file, can read in any amount of trajectory data with no extra knowledge needed about how many trajectories there are in the data file. 
 This is to provide an example of the approach which should be used when using SSG on large volumes of collated data.
-Both scripts, after calculating the cumulative measures of all trajectories on the same grid, then calculate measures for each trajectory individually and deposit these into a new csv file.
+Both scripts, after calculating the cumulative measures of all trajectories on the same grid, then calculate measures for each trajectory individually and deposits all measures calculated into a new csv file.
 ```csv
 ID,Onset,Parent Affect,Child Affect
 123,0.0,1,2
@@ -139,12 +139,11 @@ if __name__=="__main__":
     # calculate measures
     measures_1 = ssg.Grid([trajectory1]).get_measures()
     measures_2 = ssg.Grid([trajectory2]).get_measures()
-    # get the column names from the measure object using the python function vars, which turns objects into dictionaries
-    column_names = vars(measures_1).keys()
-    # get your rows for the csv file using the same trick
-    rows = [vars(measures_1).values(), vars(measures_2).values()]
-    # put the rows and column headers into a pandas DataFrame
-    df = pd.DataFrame(rows, columns=column_names)
+    # make a list `rows', using the python function vars to convert the measures
+    # from a class to a dictionary (a form which pandas knows how to deal with)
+    rows = [vars(measures_1), vars(measures_2), vars(measure)]
+    # put the rows into a pandas DataFrame
+    df = pd.DataFrame(rows)
     # use the DataFrame function to_csv to output the data to a csv file. 
     # index=False tells it to not include a row index in the leftmost column
     df.to_csv("test_output.csv", index=False)
@@ -198,14 +197,14 @@ if __name__=="__main__":
     individual_measures = []
     for trajectory in trajectories:
         individual_measures.append(ssg.Grid([trajectory]).get_measures())
-    # get the column names from the measure object using the python function vars, which turns objects into dictionaries
-    column_names = vars(individual_measures[0]).keys()
-    # get your rows for the csv file using the same trick
     rows = []
-    for measure in individual_measures:
-        rows.append(vars(measure).values())
-    # put the rows and column headers into a pandas DataFrame
-    df = pd.DataFrame(rows, columns=column_names)
+    # add each of the measures to the list `rows', using the python function vars to convert them
+    # from a class to a dictionary (a form which pandas knows how to deal with)
+    for m in individual_measures:
+        rows.append(vars(m))
+    rows.append(measure)
+    # put the rows into a pandas DataFrame
+    df = pd.DataFrame(rows)
     # use the DataFrame function to_csv to output the data to a csv file. 
     # index=False tells it to not include a row index in the leftmost column
     df.to_csv("test_output.csv", index=False)
