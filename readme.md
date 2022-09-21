@@ -500,7 +500,7 @@ TrajectoryStyle(colour=None, alpha=1.0, connection_style="arc3,rad=0.0", arrow_s
    This can either be in the form of a colour name (eg. "red) or as a 6 digit hexadecimal value (eg. "#ffffff"). See [here](https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.scatter.html) for more information.
 * `alpha`
 
-   Transparency for the nodes in the trajectory when drawn on a grid.
+   Transparency for the nodes in the trajectory when drawn on a grid on a scale from 0 (completely transparent) to 1 (opaque).
 * `connection_style`
 
    Style of curve connecting nodes on the trajectory graph. See https://matplotlib.org/3.1.1/api/_as_gen/matplotlib.patches.FancyArrowPatch.html#matplotlib.patches.FancyArrowPatch for more information on the options.
