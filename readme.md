@@ -342,7 +342,7 @@ if __name__=="__main__":
     quantization = ssg.GridQuantization(x_order=ordering, y_order=ordering)
     # pass the trajectory to the Grid object constructor
     # the constructor takes a list of trajectories, so here we put the trajectory inside square brackets, making it a list of length 1
-    grid=ssg.Grid([trajectory])
+    grid=ssg.Grid([trajectory], quantization)
 
     # to print measures for this grid 
 
