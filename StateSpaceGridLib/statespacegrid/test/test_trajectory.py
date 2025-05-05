@@ -14,16 +14,16 @@ class TestTrajectoryConstruction(unittest.TestCase):
         traj = trajectory.Trajectory(x_range=[0,1,2,3], y_range=[4,5,6,7])
         self.assertEqual(traj.state_space.x_range, [0,1,2,3])
         self.assertEqual(traj.state_space.y_range, [4,5,6,7])
-    
+
     def test_normal_use(self):
         traj = trajectory.Trajectory(
-            x_range=["bad", "ok", "good"], 
-            y_range=[0, 1, 2], 
+            x_range=["bad", "ok", "good"],
+            y_range=[0, 1, 2],
             states=[("ok", 1), ("bad", 0), ("bad", 1), ("bad", 2), ("ok", 2), ("good", 2), ("good", 1), ("good", 0), ("ok", 0)],
             times=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
             )
-        
-    
+
+
     def test_bad_inputs(self):
 
         with self.assertRaises(Exception) as context:
