@@ -1,3 +1,20 @@
+"""Module containing definitions of a Trajectory and the state space in which that trajectory applies.
+
+Trajectories are the building blocks of StateSpaceGridLib.
+These objects describe the path of a dyad through a state space.
+
+Typical usage example:
+
+    traj = trajectory.Trajectory(
+                x_range=["bad", "ok", "good"],
+                y_range=[0, 1, 2],
+                states=[("ok", 1), ("bad", 0), ("bad", 1), ("bad", 2), ("ok", 2), ("good", 2), ("good", 1), ("good", 0), ("ok", 0)],
+                times=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+                )
+
+    print(measures.getmeasures(traj))
+
+"""
 from dataclasses import dataclass
 from typing import List
 
@@ -7,6 +24,17 @@ class StateSpace:
     y_range: List
 
 class Trajectory:
+    """
+    Trajectory class to hold a single trajectory plus an idea of the state space it lies in.
+
+    Attributes:
+        state_space: An object holding all possible state values in the x and y axes
+        states: A list of (x, y) pairs where x and y are members of state_space.x_range and
+                state_space.y_range respectively
+        times: A list of integers or floats giving the timestamps of the state transitions.
+               These are fenceposts (ie. fall at either side of each state) so there should
+               be N+1 of these, where N is the number of states
+    """
 
     def __init__(self, x_range: List = [1,2,3,4], y_range: List = [1,2,3,4], states: List = [], times: List = [0.0]):
         self.state_space = StateSpace(x_range, y_range)
@@ -15,8 +43,9 @@ class Trajectory:
         self.times = times
 
         self.__internal_validity_check()
-    
+
     def __internal_validity_check(self):
+        """Checks all values in object to ensure trajectory is valid"""
         if not all(map(lambda state: len(state) == 2, self.states)):
             raise ValueError("The states should be supplied as a list of (x_value, y_value) pairs")
         if len(self.states) != len(self.times) -1:
