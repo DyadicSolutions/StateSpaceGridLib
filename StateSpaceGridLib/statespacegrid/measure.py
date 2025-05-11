@@ -66,24 +66,28 @@ def validate_trajectories(*trajs: Trajectory):
 
 def _get_mean_trajectory_duration(*trajs: Trajectory) -> float:
     pass
+
 def get_mean_trajectory_duration(*trajs: Trajectory) -> float:
     validate_trajectories(*trajs)
     return _get_mean_trajectory_duration(*trajs)
 
 def _get_mean_num_events(*trajs: Trajectory) -> float:
     pass
+
 def get_mean_num_events(*trajs: Trajectory) -> float:
 	validate_trajectories(*trajs)
 	return _get_mean_num_events(*trajs)
 
 def _get_mean_num_visits(*trajs: Trajectory) -> float:
     pass
+
 def get_mean_num_visits(*trajs: Trajectory) -> float:
 	validate_trajectories(*trajs)
 	return _get_mean_num_visits(*trajs)
 
 def _get_mean_cell_range(*trajs: Trajectory) -> float:
     pass
+
 def get_mean_cell_range(*trajs: Trajectory) -> float:
 	validate_trajectories(*trajs)
 	return _get_mean_cell_range(*trajs)
@@ -96,24 +100,28 @@ def get_total_cell_range(*trajs: Trajectory) -> int:
 
 def _get_mean_event_duration(*trajs: Trajectory) -> float:
     pass
+
 def get_mean_event_duration(*trajs: Trajectory) -> float:
 	validate_trajectories(*trajs)
 	return _get_mean_event_duration(*trajs)
 
 def _get_mean_visit_duration(*trajs: Trajectory) -> float:
     pass
+
 def get_mean_visit_duration(*trajs: Trajectory) -> float:
 	validate_trajectories(*trajs)
 	return _get_mean_visit_duration(*trajs)
 
 def _get_mean_state_duration(*trajs: Trajectory) -> float:
     pass
+
 def get_mean_state_duration(*trajs: Trajectory) -> float:
 	validate_trajectories(*trajs)
 	return _get_mean_state_duration(*trajs)
 
 def _get_mean_dispersion(*trajs: Trajectory) -> float:
     pass
+
 def get_mean_dispersion(*trajs: Trajectory) -> float:
 	validate_trajectories(*trajs)
 	return _get_mean_dispersion(*trajs)
