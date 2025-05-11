@@ -28,23 +28,27 @@ class TestTrajectoryConstruction(unittest.TestCase):
 
         with self.assertRaises(Exception) as context:
             trajectory.Trajectory(times=[])
-            self.assertTrue("The number of states should be equal to the number of timestamps minus 1" in context.exception)
+        self.assertTrue("The number of states should be equal to the number of timestamps minus 1" in str(context.exception))
 
         with self.assertRaises(Exception) as context:
             trajectory.Trajectory(times=[0,1,2])
-            self.assertTrue("The number of states should be equal to the number of timestamps minus 1" in context.exception)
+        self.assertTrue("The number of states should be equal to the number of timestamps minus 1" in str(context.exception))
 
         with self.assertRaises(Exception) as context:
             trajectory.Trajectory(times=["a"])
-            self.assertTrue("Times are expected as integers or floats" in context.exception)
+        self.assertTrue("Times are expected as integers or floats" in str(context.exception))
 
         with self.assertRaises(Exception) as context:
             trajectory.Trajectory(times=[0,1,2,3], states=[(1,1), (2)])
-            self.assertTrue("The states should be supplied as a list of (x_value, y_value) pairs" in context.exception)
+        self.assertTrue("The states should be supplied as a list of (x_value, y_value) tuple or list pairs" in str(context.exception))
+
+        with self.assertRaises(Exception) as context:
+            trajectory.Trajectory(times=[0,1,2,3], states=[[1,1], [2]])
+        self.assertTrue("The states should be supplied as a list of (x_value, y_value) pairs" in str(context.exception))
 
         with self.assertRaises(Exception) as context:
             trajectory.Trajectory(times=[0,1], states=[(0,10)])
-            self.assertTrue("All provided state points should fall within the ranges provided in x_range and y_range" in context.exception)
+        self.assertTrue("All provided state points should fall within the ranges provided in x_range and y_range" in str(context.exception))
 
 
 if __name__ == "__main__":
