@@ -67,5 +67,23 @@ class TestMeasureCalculations(unittest.TestCase):
         self.assertTrue(math.isclose(measure.get_mean_state_duration(traj1), 1/3))
         self.assertTrue(measure.get_mean_dispersion(traj1) == 0)
 
+        traj2 = trajectory.Trajectory(
+            x_range=["bad", "ok", "good"],
+            y_range=["bad", "ok", "good"],
+            states=[("bad", "good"), ("ok", "ok"), ("ok", "ok"), ("good", "bad"), ("bad", "good")],
+            times=[0, 0.9, 1, 1.5, 1.7, 2]
+        )
+
+        self.assertTrue(measure.get_mean_state_range(traj2) == 3)
+        self.assertTrue(measure.get_mean_trajectory_duration(traj2) == 2)
+        self.assertTrue(measure.get_mean_number_of_events(traj2) == 5)
+        self.assertTrue(measure.get_mean_number_of_visits(traj2) == 4)
+        self.assertTrue(measure.get_mean_state_range(traj2) == 3)
+        self.assertTrue(measure.get_total_state_range(traj2) == 3)
+        self.assertTrue(math.isclose(measure.get_mean_event_duration(traj2), 0.4))
+        self.assertTrue(math.isclose(measure.get_mean_visit_duration(traj2), 0.5))
+        self.assertTrue(math.isclose(measure.get_mean_state_duration(traj2), 2/3))
+        self.assertTrue(measure.get_mean_dispersion(traj2) == 0)
+
 if __name__ == "__main__":
     unittest.main()
