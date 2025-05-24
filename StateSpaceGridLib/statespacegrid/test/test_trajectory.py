@@ -19,10 +19,10 @@ class TestTrajectoryConstruction(unittest.TestCase):
         traj = trajectory.Trajectory(
             x_range=["bad", "ok", "good"],
             y_range=[0, 1, 2],
-            states=[("ok", 1), ("bad", 0), ("bad", 1), ("bad", 2), ("ok", 2), ("good", 2), ("good", 1), ("good", 0), ("ok", 0)],
-            times=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+            states=[("ok", 1), ("bad", 0), ("bad", 1), ("bad", 2), ("ok", 2), ("ok", 2), ("good", 2), ("good", 1), ("good", 0), ("ok", 0), ("ok", 0)],
+            times=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
             )
-
+        self.assertTrue(traj.get_visits() == [("ok", 1), ("bad", 0), ("bad", 1), ("bad", 2), ("ok", 2), ("good", 2), ("good", 1), ("good", 0), ("ok", 0)])
 
     def test_bad_inputs(self):
 
@@ -49,6 +49,10 @@ class TestTrajectoryConstruction(unittest.TestCase):
         with self.assertRaises(Exception) as context:
             trajectory.Trajectory(times=[0,1], states=[(0,10)])
         self.assertTrue("All provided state points should fall within the ranges provided in x_range and y_range" in str(context.exception))
+
+        with self.assertRaises(Exception) as context:
+            trajectory.Trajectory(states=[(1,1), (2,2)], times=[1, 0.9, 1.5])
+        self.assertTrue("Times should appear in ascending order" in str(context.exception))
 
 
 if __name__ == "__main__":

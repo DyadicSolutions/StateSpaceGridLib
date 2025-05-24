@@ -47,5 +47,24 @@ class TestMeasureCalculations(unittest.TestCase):
             measure.get_measures(traj1, traj2)
         self.assertTrue("The order of states should be the same in all state spaces in the provided trajectories" in str(context.exception))
 
+    def test_correct_values_single_trajectory(self):
+        traj1 = trajectory.Trajectory(
+            x_range=["bad", "ok", "good"],
+            y_range=["bad", "ok", "good"],
+            states=[("bad", "bad"), ("ok", "ok"), ("good", "good")],
+            times=[1, 1.1, 1.5, 2]
+        )
+
+        self.assertTrue(measure.get_mean_cell_range(traj1) == 3)
+        self.assertTrue(measure.get_mean_trajectory_duration(traj1) == 0)
+        self.assertTrue(measure.get_mean_number_of_events(traj1) == 0)
+        self.assertTrue(measure.get_mean_number_of_visits(traj1) == 0)
+        self.assertTrue(measure.get_mean_cell_range(traj1) == 0)
+        self.assertTrue(measure.get_total_cell_range(traj1) == 0)
+        self.assertTrue(measure.get_mean_event_duration(traj1) == 0)
+        self.assertTrue(measure.get_mean_visit_duration(traj1) == 0)
+        self.assertTrue(measure.get_mean_state_duration(traj1) == 0)
+        self.assertTrue(measure.get_mean_dispersion(traj1) == 0)
+
 if __name__ == "__main__":
     unittest.main()
