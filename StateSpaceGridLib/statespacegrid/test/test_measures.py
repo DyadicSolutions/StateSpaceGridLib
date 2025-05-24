@@ -55,12 +55,12 @@ class TestMeasureCalculations(unittest.TestCase):
             times=[1, 1.1, 1.5, 2]
         )
 
-        self.assertTrue(measure.get_mean_cell_range(traj1) == 3)
+        self.assertTrue(measure.get_mean_state_range(traj1) == 3)
         self.assertTrue(measure.get_mean_trajectory_duration(traj1) == 0)
         self.assertTrue(measure.get_mean_number_of_events(traj1) == 0)
         self.assertTrue(measure.get_mean_number_of_visits(traj1) == 0)
-        self.assertTrue(measure.get_mean_cell_range(traj1) == 0)
-        self.assertTrue(measure.get_total_cell_range(traj1) == 0)
+        self.assertTrue(measure.get_mean_state_range(traj1) == 0)
+        self.assertTrue(measure.get_total_state_range(traj1) == 0)
         self.assertTrue(measure.get_mean_event_duration(traj1) == 0)
         self.assertTrue(measure.get_mean_visit_duration(traj1) == 0)
         self.assertTrue(measure.get_mean_state_duration(traj1) == 0)

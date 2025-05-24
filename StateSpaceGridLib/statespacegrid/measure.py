@@ -2,7 +2,7 @@
 
 Measures are the various properties calculated from a trajectory or set of trajectories. They are as follows:
 
-- mean trajectory duration: The mean duration of all trajectories provided to get_measures or get_mean_duration
+- mean trajectory duration: The mean duration of all trajectories provided to get_measures or get_mean_trajectory_duration
 - mean number of events: The mean number of events in the trajectories provided to get_measures or get_mean_num_events
 - mean number of visits: The mean number of events in a state across all trajectories provided to get_measures or get_mean_num_visits. Consecutive events in the same state count as a single visit
 - mean state range: The mean number of unique states visited by the trajectories provided to get_measures or get_mean_state_range
@@ -25,7 +25,6 @@ Typical usage example:
 
 """
 from dataclasses import dataclass
-from typing import List, Tuple
 from itertools import chain
 import statistics
 from collections import defaultdict
@@ -37,8 +36,8 @@ class Measures:
     mean_trajectory_duration: float
     mean_number_of_events: float
     mean_number_of_visits: float
-    mean_cell_range: float
-    total_cell_range: int
+    mean_state_range: float
+    total_state_range: int
     mean_event_duration: float
     mean_visit_duration: float
     mean_state_duration: float
@@ -70,6 +69,7 @@ def _get_mean_trajectory_duration(*trajs: Trajectory) -> float:
     return statistics.mean(map(lambda traj: traj.times[-1] - traj.times[0], trajs))
 
 def get_mean_trajectory_duration(*trajs: Trajectory) -> float:
+    """Get the mean duration of all trajectories"""
     validate_trajectories(*trajs)
     return _get_mean_trajectory_duration(*trajs)
 
@@ -77,29 +77,34 @@ def _get_mean_number_of_events(*trajs: Trajectory) -> float:
     return statistics.mean(map(lambda traj: len(traj.states), trajs))
 
 def get_mean_number_of_events(*trajs: Trajectory) -> float:
-	validate_trajectories(*trajs)
-	return _get_mean_number_of_events(*trajs)
+    """Get the mean number of events in the trajectories"""
+    validate_trajectories(*trajs)
+    return _get_mean_number_of_events(*trajs)
 
 def _get_mean_number_of_visits(*trajs: Trajectory) -> float:
     return statistics.mean(map(lambda traj: len(traj.get_visits()), trajs))
 
 def get_mean_number_of_visits(*trajs: Trajectory) -> float:
-	validate_trajectories(*trajs)
-	return _get_mean_number_of_visits(*trajs)
+    """Get the mean number of events in a state across all trajectories.
+    Consecutive events in the same state count as a single visit"""
+    validate_trajectories(*trajs)
+    return _get_mean_number_of_visits(*trajs)
 
-def _get_mean_cell_range(*trajs: Trajectory) -> float:
+def _get_mean_state_range(*trajs: Trajectory) -> float:
     return statistics.mean(map(lambda traj: len(set(traj.states)), trajs))
 
-def get_mean_cell_range(*trajs: Trajectory) -> float:
-	validate_trajectories(*trajs)
-	return _get_mean_cell_range(*trajs)
+def get_mean_state_range(*trajs: Trajectory) -> float:
+    """Get the mean number of unique states visited by the trajectories"""
+    validate_trajectories(*trajs)
+    return _get_mean_state_range(*trajs)
 
-def _get_total_cell_range(*trajs: Trajectory) -> int:
+def _get_total_state_range(*trajs: Trajectory) -> int:
     return len({state for traj in trajs for state in traj})
 
-def get_total_cell_range(*trajs: Trajectory) -> int:
-	validate_trajectories(*trajs)
-	return _get_total_cell_range(*trajs)
+def get_total_state_range(*trajs: Trajectory) -> int:
+    """Get the total number of unique states visited across all trajectories"""
+    validate_trajectories(*trajs)
+    return _get_total_state_range(*trajs)
 
 def _get_mean_event_duration(*trajs: Trajectory) -> float:
     return statistics.mean(
@@ -111,8 +116,9 @@ def _get_mean_event_duration(*trajs: Trajectory) -> float:
         )
 
 def get_mean_event_duration(*trajs: Trajectory) -> float:
-	validate_trajectories(*trajs)
-	return _get_mean_event_duration(*trajs)
+    """Get the mean duration of an event for a single trajectory, averaged across all trajectories"""
+    validate_trajectories(*trajs)
+    return _get_mean_event_duration(*trajs)
 
 def _get_mean_visit_duration(*trajs: Trajectory) -> float:
     return statistics.mean(
@@ -124,8 +130,10 @@ def _get_mean_visit_duration(*trajs: Trajectory) -> float:
         )
 
 def get_mean_visit_duration(*trajs: Trajectory) -> float:
-	validate_trajectories(*trajs)
-	return _get_mean_visit_duration(*trajs)
+    """Get the mean duration of a visit to a state for a single trajectory, averaged across all trajectories.
+    Consecutive events in the same state count as a single visit"""
+    validate_trajectories(*trajs)
+    return _get_mean_visit_duration(*trajs)
 
 def __get_state_durations(traj: Trajectory) -> defaultdict:
     state_durations = defaultdict(float)
@@ -139,8 +147,10 @@ def _get_mean_state_duration(*trajs: Trajectory) -> float:
     )
 
 def get_mean_state_duration(*trajs: Trajectory) -> float:
-	validate_trajectories(*trajs)
-	return _get_mean_state_duration(*trajs)
+    """Get the mean time spent in a state for a single trajectory, averaged across all trajectories.
+    This does not include states not visited in the state space."""
+    validate_trajectories(*trajs)
+    return _get_mean_state_duration(*trajs)
 
 def __get_dispersion(traj: Trajectory) -> float:
     state_space_size = len(traj.state_space.x_range) * len(traj.state_space.y_range)
@@ -155,19 +165,20 @@ def _get_mean_dispersion(*trajs: Trajectory) -> float:
     return statistics.mean(map(__get_dispersion, trajs))
 
 def get_mean_dispersion(*trajs: Trajectory) -> float:
-	validate_trajectories(*trajs)
-	return _get_mean_dispersion(*trajs)
+    """Get the dispersion of a trajectory, averaged across all trajectories."""
+    validate_trajectories(*trajs)
+    return _get_mean_dispersion(*trajs)
 
 def get_measures(*trajs: Trajectory) -> Measures:
     validate_trajectories(*trajs)
     return Measures(
         mean_trajectory_duration = _get_mean_trajectory_duration(*trajs),
         mean_number_of_events = _get_mean_number_of_events(*trajs),
-        mean_number_of_visits=_get_mean_number_of_visits(*trajs),
-        mean_cell_range=_get_mean_cell_range(*trajs),
-        total_cell_range=_get_total_cell_range(*trajs),
-        mean_event_duration=_get_mean_event_duration(*trajs),
-        mean_visit_duration=_get_mean_visit_duration(*trajs),
-        mean_state_duration=_get_mean_state_duration(*trajs),
-        mean_dispersion=_get_mean_dispersion(*trajs)
+        mean_number_of_visits = _get_mean_number_of_visits(*trajs),
+        mean_state_range = _get_mean_state_range(*trajs),
+        total_state_range = _get_total_state_range(*trajs),
+        mean_event_duration = _get_mean_event_duration(*trajs),
+        mean_visit_duration = _get_mean_visit_duration(*trajs),
+        mean_state_duration = _get_mean_state_duration(*trajs),
+        mean_dispersion = _get_mean_dispersion(*trajs)
     )
