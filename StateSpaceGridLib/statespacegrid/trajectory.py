@@ -61,8 +61,8 @@ class Trajectory:
 
     def get_visits(self) -> List[Tuple]:
         """Returns a list of all visits to states. A visit is defined as 1 or more consecutive events in the same state"""
-        return self.states[0] + [state_pair[1] for state_pair in zip(self.states, self.states[1:]) if state_pair[0] != state_pair[1]]
+        return [self.states[0]] + [state_pair[1] for state_pair in zip(self.states, self.states[1:]) if state_pair[0] != state_pair[1]]
 
     def get_visit_times(self) -> List[int | float]:
         """Returns a list of times for all visits to states. A visit is defined as 1 or more consecutive events in the same state"""
-        return self.times[0] + [self.times[i] for i in range(1, len(self.times)) if i == len(self.states) or self.states[i-1] != self.states[i]]
+        return [self.times[0]] + [self.times[i] for i in range(1, len(self.times)) if i == len(self.states) or self.states[i-1] != self.states[i]]

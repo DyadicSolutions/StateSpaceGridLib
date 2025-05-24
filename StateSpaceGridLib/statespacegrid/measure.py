@@ -99,7 +99,7 @@ def get_mean_state_range(*trajs: Trajectory) -> float:
     return _get_mean_state_range(*trajs)
 
 def _get_total_state_range(*trajs: Trajectory) -> int:
-    return len({state for traj in trajs for state in traj})
+    return len({state for traj in trajs for state in traj.states})
 
 def get_total_state_range(*trajs: Trajectory) -> int:
     """Get the total number of unique states visited across all trajectories"""

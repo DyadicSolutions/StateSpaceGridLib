@@ -1,4 +1,5 @@
 import unittest
+import math
 
 import statespacegrid.measure as measure
 import statespacegrid.trajectory as trajectory
@@ -56,14 +57,14 @@ class TestMeasureCalculations(unittest.TestCase):
         )
 
         self.assertTrue(measure.get_mean_state_range(traj1) == 3)
-        self.assertTrue(measure.get_mean_trajectory_duration(traj1) == 0)
-        self.assertTrue(measure.get_mean_number_of_events(traj1) == 0)
-        self.assertTrue(measure.get_mean_number_of_visits(traj1) == 0)
-        self.assertTrue(measure.get_mean_state_range(traj1) == 0)
-        self.assertTrue(measure.get_total_state_range(traj1) == 0)
-        self.assertTrue(measure.get_mean_event_duration(traj1) == 0)
-        self.assertTrue(measure.get_mean_visit_duration(traj1) == 0)
-        self.assertTrue(measure.get_mean_state_duration(traj1) == 0)
+        self.assertTrue(measure.get_mean_trajectory_duration(traj1) == 1)
+        self.assertTrue(measure.get_mean_number_of_events(traj1) == 3)
+        self.assertTrue(measure.get_mean_number_of_visits(traj1) == 3)
+        self.assertTrue(measure.get_mean_state_range(traj1) == 3)
+        self.assertTrue(measure.get_total_state_range(traj1) == 3)
+        self.assertTrue(math.isclose(measure.get_mean_event_duration(traj1), 1/3))
+        self.assertTrue(math.isclose(measure.get_mean_visit_duration(traj1), 1/3))
+        self.assertTrue(math.isclose(measure.get_mean_state_duration(traj1), 1/3))
         self.assertTrue(measure.get_mean_dispersion(traj1) == 0)
 
 if __name__ == "__main__":
