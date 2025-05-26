@@ -33,6 +33,20 @@ from statespacegrid.trajectory import Trajectory
 
 @dataclass()
 class Measures:
+    """
+    Measures class to hold all measures for a trajectory or collection of trajectories.
+
+    Attributes:
+        mean_trajectory_duration: The mean duration of all trajectories provided
+        mean_number_of_events: The mean number of events in the trajectories provided to get_measures or get_mean_num_events
+        mean_number_of_visits: The mean number of events in a state across all trajectories provided. Consecutive events in the same state count as a single visit
+        mean_state_range: The mean number of unique states visited by the trajectories provided
+        total_state_range: The total number of unique states visited across all trajectories provided
+        mean_event_duration: The mean duration of an event for a single trajectory, averaged across all trajectories provided
+        mean_visit_duration: The mean duration of a visit to a state for a single trajectory, averaged across all trajectories provided. Consecutive events in the same state count as a single visit
+        mean_state_duration: The mean time spent in a state for a single trajectory, averaged across all trajectories provided. This does not include states not visited in the state space.
+        mean_dispersion: Mean dispersion of a trajectory, averaged across all trajectories provided
+    """
     mean_trajectory_duration: float
     mean_number_of_events: float
     mean_number_of_visits: float
@@ -170,6 +184,7 @@ def get_mean_dispersion(*trajs: Trajectory) -> float:
     return _get_mean_dispersion(*trajs)
 
 def get_measures(*trajs: Trajectory) -> Measures:
+    """Get all measures, packaged in a Measures object"""
     validate_trajectories(*trajs)
     return Measures(
         mean_trajectory_duration = _get_mean_trajectory_duration(*trajs),
