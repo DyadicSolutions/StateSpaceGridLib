@@ -65,7 +65,7 @@ class TestMeasureCalculations(unittest.TestCase):
         self.assertTrue(math.isclose(measure.get_mean_event_duration(traj1), 1/3))
         self.assertTrue(math.isclose(measure.get_mean_visit_duration(traj1), 1/3))
         self.assertTrue(math.isclose(measure.get_mean_state_duration(traj1), 1/3))
-        self.assertTrue(measure.get_mean_dispersion(traj1) == 0)
+        self.assertTrue(math.isclose(measure.get_mean_dispersion(traj1), 0.6525))
 
         traj2 = trajectory.Trajectory(
             x_range=["bad", "ok", "good"],
@@ -83,7 +83,33 @@ class TestMeasureCalculations(unittest.TestCase):
         self.assertTrue(math.isclose(measure.get_mean_event_duration(traj2), 0.4))
         self.assertTrue(math.isclose(measure.get_mean_visit_duration(traj2), 0.5))
         self.assertTrue(math.isclose(measure.get_mean_state_duration(traj2), 2/3))
-        self.assertTrue(measure.get_mean_dispersion(traj2) == 0)
+        self.assertTrue(math.isclose(measure.get_mean_dispersion(traj2), 0.6075))
+
+    def test_correct_values_multi_trajectory(self):
+        traj1 = trajectory.Trajectory(
+            x_range=["bad", "ok", "good"],
+            y_range=["bad", "ok", "good"],
+            states=[("bad", "bad"), ("ok", "ok"), ("good", "good")],
+            times=[1, 1.1, 1.5, 2]
+        )
+
+        traj2 = trajectory.Trajectory(
+            x_range=["bad", "ok", "good"],
+            y_range=["bad", "ok", "good"],
+            states=[("bad", "good"), ("ok", "ok"), ("ok", "ok"), ("good", "bad"), ("bad", "good")],
+            times=[0, 0.9, 1, 1.5, 1.7, 2]
+        )
+
+        self.assertTrue(measure.get_mean_state_range(traj1, traj2) == 3)
+        self.assertTrue(math.isclose(measure.get_mean_trajectory_duration(traj1, traj2), 1.5))
+        self.assertTrue(measure.get_mean_number_of_events(traj1, traj2) == 4)
+        self.assertTrue(math.isclose(measure.get_mean_number_of_visits(traj1, traj2), 3.5))
+        self.assertTrue(measure.get_mean_state_range(traj1, traj2) == 3)
+        self.assertTrue(measure.get_total_state_range(traj1, traj2) == 5)
+        self.assertTrue(math.isclose(measure.get_mean_event_duration(traj1, traj2), 0.3666666666666))
+        self.assertTrue(math.isclose(measure.get_mean_visit_duration(traj1, traj2), 0.4166666666666))
+        self.assertTrue(math.isclose(measure.get_mean_state_duration(traj1, traj2), 0.5))
+        self.assertTrue(math.isclose(measure.get_mean_dispersion(traj1, traj2), 0.63))
 
 if __name__ == "__main__":
     unittest.main()
