@@ -6,5 +6,6 @@ setup(
     packages=find_packages(),
     description="2D state space grid diagrams and measures for dynamic systems",
     install_requires=[
+        "matplotlib"
     ],
 )

@@ -24,6 +24,12 @@ class StateSpace:
     x_range: List
     y_range: List
 
+    def get_x_index(self, x):
+        return self.x_range.index(x)
+
+    def get_y_index(self, y):
+        return self.y_range.index(y)
+
 class Trajectory:
     """
     Trajectory class to hold a single trajectory plus an idea of the state space it lies in.
@@ -67,6 +73,10 @@ class Trajectory:
     def get_visit_times(self) -> List[int | float]:
         """Returns a list of times for all visits to states. A visit is defined as 1 or more consecutive events in the same state"""
         return [self.times[0]] + [self.times[i] for i in range(1, len(self.times)) if i == len(self.states) or self.states[i-1] != self.states[i]]
+
+    def get_visit_durations(self) -> List[int | float]:
+        """Returns a list of times for all visits to states. A visit is defined as 1 or more consecutive events in the same state"""
+        return [t1-t0 for t0, t1 in zip(self.get_visit_times(), self.get_visit_times()[1:])]
 
 
 def validate_trajectories(*trajs: Trajectory):
