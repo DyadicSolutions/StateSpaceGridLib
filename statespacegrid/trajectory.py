@@ -17,6 +17,7 @@ Typical usage example:
 """
 from dataclasses import dataclass
 from typing import List, Tuple
+from itertools import chain
 
 @dataclass()
 class StateSpace:
@@ -66,3 +67,26 @@ class Trajectory:
     def get_visit_times(self) -> List[int | float]:
         """Returns a list of times for all visits to states. A visit is defined as 1 or more consecutive events in the same state"""
         return [self.times[0]] + [self.times[i] for i in range(1, len(self.times)) if i == len(self.states) or self.states[i-1] != self.states[i]]
+
+
+def validate_trajectories(*trajs: Trajectory):
+    """Checks that state spaces are consistent across all provided trajectories"""
+
+    if len(trajs) == 0:
+        raise ValueError("You must provide at least 1 trajectory")
+
+    x_ranges = set(chain(*(traj.state_space.x_range for traj in trajs)))
+    if not all(map(lambda traj: set(traj.state_space.x_range) == x_ranges, trajs)):
+        raise ValueError("The state spaces of all provided trajectories must match")
+
+    y_ranges = set(chain(*(traj.state_space.y_range for traj in trajs)))
+    if not all(map(lambda traj: set(traj.state_space.y_range) == y_ranges, trajs)):
+        raise ValueError("The state spaces of all provided trajectories must match")
+
+    first_traj_x_range = trajs[0].state_space.x_range
+    if not all(map(lambda traj: all(len(set(comp)) == 1 for comp in zip(first_traj_x_range, traj.state_space.x_range)), trajs[1:])):
+        raise ValueError("The order of states should be the same in all state spaces in the provided trajectories")
+
+    first_traj_y_range = trajs[0].state_space.y_range
+    if not all(map(lambda traj: all(len(set(comp)) == 1 for comp in zip(first_traj_y_range, traj.state_space.y_range)), trajs[1:])):
+        raise ValueError("The order of states should be the same in all state spaces in the provided trajectories")

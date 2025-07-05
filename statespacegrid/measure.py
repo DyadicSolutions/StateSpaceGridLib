@@ -25,11 +25,10 @@ Typical usage example:
 
 """
 from dataclasses import dataclass
-from itertools import chain
 import statistics
 from collections import defaultdict
 
-from statespacegrid.trajectory import Trajectory
+from statespacegrid.trajectory import Trajectory, validate_trajectories
 
 @dataclass()
 class Measures:
@@ -56,28 +55,6 @@ class Measures:
     mean_visit_duration: float
     mean_state_duration: float
     mean_dispersion: float
-
-def validate_trajectories(*trajs: Trajectory):
-    """Checks that state spaces are consistent across all provided trajectories"""
-
-    if len(trajs) == 0:
-        raise ValueError("You must provide at least 1 trajectory")
-
-    x_ranges = set(chain(*(traj.state_space.x_range for traj in trajs)))
-    if not all(map(lambda traj: set(traj.state_space.x_range) == x_ranges, trajs)):
-        raise ValueError("The state spaces of all provided trajectories must match")
-
-    y_ranges = set(chain(*(traj.state_space.y_range for traj in trajs)))
-    if not all(map(lambda traj: set(traj.state_space.y_range) == y_ranges, trajs)):
-        raise ValueError("The state spaces of all provided trajectories must match")
-
-    first_traj_x_range = trajs[0].state_space.x_range
-    if not all(map(lambda traj: all(len(set(comp)) == 1 for comp in zip(first_traj_x_range, traj.state_space.x_range)), trajs[1:])):
-        raise ValueError("The order of states should be the same in all state spaces in the provided trajectories")
-
-    first_traj_y_range = trajs[0].state_space.y_range
-    if not all(map(lambda traj: all(len(set(comp)) == 1 for comp in zip(first_traj_y_range, traj.state_space.y_range)), trajs[1:])):
-        raise ValueError("The order of states should be the same in all state spaces in the provided trajectories")
 
 def _get_mean_trajectory_duration(*trajs: Trajectory) -> float:
     return statistics.mean(map(lambda traj: traj.times[-1] - traj.times[0], trajs))
