@@ -95,10 +95,9 @@ def draw(*trajs: Trajectory):
     """Create a visualisation of the provided points on a state space grid"""
     validate_trajectories(*trajs)
 
-    trajectory_points_list = _get_adjusted_trajectory_points(*trajs)
-    #trajectory_circles_list = [[point.to_circle() for point in traj_points] for traj_points in trajectory_points_list]
-
     fig, ax = pyplot.subplots()
+
+    trajectory_points_list = _get_adjusted_trajectory_points(*trajs)
 
     for trajectory_points in trajectory_points_list:
         # Add lines
@@ -108,7 +107,18 @@ def draw(*trajs: Trajectory):
         for point in trajectory_points:
             ax.add_patch(point.to_circle())
 
+    # Set grid size
     ax.set_xlim((-0.5, len(trajs[0].state_space.x_range)-0.5))
     ax.set_ylim((-0.5, len(trajs[0].state_space.y_range)-0.5))
+
+    # Set grid state labels
+    ax.set_xticks([i for i in range(len(trajs[0].state_space.x_range))], labels=trajs[0].state_space.x_range)
+    ax.set_yticks([i for i in range(len(trajs[0].state_space.y_range))], labels=trajs[0].state_space.y_range)
+
+    # Add gridlines
+    ax.set_xticks([i-0.5 for i in range(len(trajs[0].state_space.x_range)+1)], minor=True)
+    ax.set_yticks([i-0.5 for i in range(len(trajs[0].state_space.y_range)+1)], minor=True)
+    ax.grid(which="minor")
+
 
     fig.savefig("ssg.png")
