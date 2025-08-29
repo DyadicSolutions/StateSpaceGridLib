@@ -68,6 +68,11 @@ class Trajectory:
 
     def get_visits(self) -> List[Tuple]:
         """Returns a list of all visits to states. A visit is defined as 1 or more consecutive events in the same state"""
+        if len(self.states) == 0:
+            return []
+        elif len(self.states) == 1:
+            return [self.states[0]]
+
         return [self.states[0]] + [state_pair[1] for state_pair in zip(self.states, self.states[1:]) if state_pair[0] != state_pair[1]]
 
     def get_visit_times(self) -> List[int | float]:

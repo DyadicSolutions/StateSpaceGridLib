@@ -14,9 +14,9 @@ Typical usage example:
 
 from statespacegrid.trajectory import Trajectory, validate_trajectories
 
-from matplotlib import patches, pyplot, colors
+from matplotlib import patches, pyplot, colors, figure, axes
 from dataclasses import dataclass
-from typing import List, Optional
+from typing import List, Optional, Tuple
 from collections import defaultdict
 from math import cos, sin, pi
 from random import random
@@ -62,6 +62,8 @@ def _adjust_trajectory_points_list(trajectory_points_list: List[List[DataPoint]]
     Function both adjusts the radius so that it fits inside the state box
     and moves points within the state box so they do not sit in the centre
     """
+    if len(trajectory_points_list[0]) == 0:
+        return
     data_points_grouped_by_state = _group_trajectory_points_by_state(trajectory_points_list)
     normalisation_factor = max(map(lambda points: sum(2*point.radius for point in points), data_points_grouped_by_state.values()))
     for state, points in data_points_grouped_by_state.items():
@@ -92,13 +94,15 @@ def _get_adjusted_trajectory_points(*trajs: Trajectory) -> List[List[DataPoint]]
     return trajectory_points_list
 
 
-def draw(*trajs: Trajectory, filename: str="ssg.png", colours: Optional[List[str]]=None,
-         xlabel: Optional[str]=None, ylabel: Optional[str]=None, title: Optional[str]=None):
+def draw(*trajs: Trajectory, filename: Optional[str]=None, colours: Optional[List[str]]=None,
+         xlabel: Optional[str]=None, ylabel: Optional[str]=None, title: Optional[str]=None,
+         fig: Optional[figure.Figure]=None, ax: Optional[axes.Axes]=None) -> Tuple[figure.Figure, axes.Axes]:
     """
     Create a visualisation of the provided points on a state space grid
 
     Keyword Arguments:
-    filename: File path for output grid visualisation
+    filename: File path for output grid visualisation. If not provided,
+              will simply return a matplotlib Axes, Figure pair
     colours: List of colours for trajectories. If not provided,
              a grid with multiple trajectories will assign each
              trajectory a new colour randomly. Uses matplotlib
@@ -109,7 +113,8 @@ def draw(*trajs: Trajectory, filename: str="ssg.png", colours: Optional[List[str
     """
     validate_trajectories(*trajs)
 
-    fig, ax = pyplot.subplots()
+    if fig == None and ax == None:
+        fig, ax = pyplot.subplots()
 
     trajectory_points_list = _get_adjusted_trajectory_points(*trajs)
 
@@ -155,4 +160,6 @@ def draw(*trajs: Trajectory, filename: str="ssg.png", colours: Optional[List[str
     if title is not None:
         ax.set_title(title)
 
-    fig.savefig(filename)
+    if filename is not None:
+        fig.savefig(filename)
+    return fig, ax
