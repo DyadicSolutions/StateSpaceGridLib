@@ -94,15 +94,17 @@ def _get_adjusted_trajectory_points(*trajs: Trajectory) -> List[List[DataPoint]]
     return trajectory_points_list
 
 
-def draw(*trajs: Trajectory, filename: Optional[str]=None, colours: Optional[List[str]]=None,
+def draw(*trajs: Trajectory, filename: Optional[str]=None, display=True, colours: Optional[List[str]]=None,
          xlabel: Optional[str]=None, ylabel: Optional[str]=None, title: Optional[str]=None,
          fig: Optional[figure.Figure]=None, ax: Optional[axes.Axes]=None) -> Tuple[figure.Figure, axes.Axes]:
     """
-    Create a visualisation of the provided points on a state space grid
+    Create a matplotlib visualisation of the provided points on a state space grid
 
     Keyword Arguments:
     filename: File path for output grid visualisation. If not provided,
               will simply return a matplotlib Axes, Figure pair
+    display: Display grid in new window if True.
+             This has the side effect of invalidating the returned figure
     colours: List of colours for trajectories. If not provided,
              a grid with multiple trajectories will assign each
              trajectory a new colour randomly. Uses matplotlib
@@ -110,6 +112,10 @@ def draw(*trajs: Trajectory, filename: Optional[str]=None, colours: Optional[Lis
     xlabel: Axis label for the x axis
     ylabel: Axis label for the y axis
     title: Title for the plot
+
+    Returns:
+    matplotlib figure for grid (valid only if display=False)
+    matplotlib axes (valid only if display=False)
     """
     validate_trajectories(*trajs)
 
@@ -162,4 +168,8 @@ def draw(*trajs: Trajectory, filename: Optional[str]=None, colours: Optional[Lis
 
     if filename is not None:
         fig.savefig(filename)
+
+    if display:
+        pyplot.show(block=True)
+
     return fig, ax
