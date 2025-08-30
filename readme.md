@@ -19,8 +19,7 @@ Once it has been installed, you can start to make use of the library within a Py
 
 ## Examples
 
-Templates 1 to 4 are all demonstrations for different approaches to handling data and getting it into a form that the SSG library can use.
-Templates 5 onwards are focused on showcasing the different features of SSG.
+Templates 1 to 5 are all demonstrations for different approaches to handling data and getting it into a form that the SSG library can use.
 For Templates 1 and 2, the csv data files provided display the recommended data file structure that can be used with the corresponding Python script without any changes required. It is perfectly fine for your data file structure to be completely different, though that would require some deviations from the Python code in the example scripts.
 
 Each example given here also exists as a standalone set of files in folder "examples"
