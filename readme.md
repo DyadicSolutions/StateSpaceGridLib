@@ -230,8 +230,8 @@ if __name__=="__main__":
 
 ### Template 3 for making use of trj files from Gridware with SSG
 
-For more information on trj files, refer to the [Gridware manual](https://www.queensu.ca/psychology/sites/psycwww/files/uploaded_files/Faculty/Tom%20Hollenstein/GridWare/GridWare1.1_Manual.pdf)
-SSG contains a tool for taking trj files, and turning them directly into trajectory objects in the python code.
+For more information on trj files, refer to the [Gridware manual](https://www.queensu.ca/psychology/sites/psycwww/files/uploaded_files/Faculty/Tom%20Hollenstein/GridWare/GridWare1.1_Manual.pdf).
+It is a simple task to take a .trj file and use it in our scripts. Below is a demo on how to do it.
 ```tsv
 Onset	variable 1	variable 2	variable 3
 0.00	1	3	2
@@ -247,7 +247,7 @@ Onset	variable 1	variable 2	variable 3
 ```
 ```python
 # Example 3
-# script for obtaining measures of state space grid and displaying the grid itself using .traj input files
+# script for obtaining measures of state space grid and displaying the grid itself using .trj input files
 
 import statespacegrid.trajectory
 import statespacegrid.measure
@@ -256,9 +256,9 @@ import pandas as pd
 
 if __name__=="__main__":
    # read in the contents of a traj data file called example3.traj
-   # .traj files are basically csv files, but suing tabs instead of commas to separate variables
-   raw_data = pd.read_csv('example3.traj', sep="\t")
-   # pass the columns of the traj file to the Trajectory object constructor
+   # .trj files are basically csv files, but suing tabs instead of commas to separate variables
+   raw_data = pd.read_csv('example3.trj', sep="\t")
+   # pass the columns of the trj file to the Trajectory object constructor
    # make sure to get rid of any NaN (Not a Number) values with dropna() and convert to a list with tolist()
    traj = statespacegrid.trajectory.Trajectory(
      x_range=[i for i in range(1,6)],

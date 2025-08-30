@@ -7,10 +7,10 @@ import statespacegrid.grid
 import pandas as pd
 
 if __name__=="__main__":
-   # read in the contents of a traj data file called example3.traj
-   # .traj files are basically csv files, but suing tabs instead of commas to separate variables
-   raw_data = pd.read_csv('example3.traj', sep="\t")
-   # pass the columns of the traj file to the Trajectory object constructor
+   # read in the contents of a trj data file called example3.trj
+   # .trj files are basically csv files, but suing tabs instead of commas to separate variables
+   raw_data = pd.read_csv('example3.trj', sep="\t")
+   # pass the columns of the trj file to the Trajectory object constructor
    # make sure to get rid of any NaN (Not a Number) values with dropna() and convert to a list with tolist()
    traj = statespacegrid.trajectory.Trajectory(
      x_range=[i for i in range(1,6)],
