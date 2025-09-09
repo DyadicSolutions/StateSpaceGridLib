@@ -154,7 +154,7 @@ def draw(*trajs: Trajectory, filename: Optional[str]=None, display=True, colours
     # Add gridlines
     ax.set_xticks([i-0.5 for i in range(len(trajs[0].state_space.x_range)+1)], minor=True)
     ax.set_yticks([i-0.5 for i in range(len(trajs[0].state_space.y_range)+1)], minor=True)
-    ax.grid(which="minor")
+    ax.grid(visible=True, which="minor")
 
     # Add axis labels
     if xlabel is not None:
