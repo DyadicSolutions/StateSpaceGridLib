@@ -1,0 +1,16 @@
+name: Unit Test Runner
+run-name: Unit test run for pull request by ${{ github.actor }} with branch ${{ github.ref }}
+on:
+  push:
+    branches: [ $default-branch ]
+  pull_request:
+    branches: [ $default-branch ]
+jobs:
+  Run-Unit-Tests-Linux:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Unit tests on ${{ runner.os }}"
+      - name: Install deps
+        run: python3 -m setup.py install
+      - name: Run tests
+        run: python3 -m unittest
